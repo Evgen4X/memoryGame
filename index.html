@@ -6,8 +6,15 @@
 		<title>Memory game</title>
 	</head>
 	<body>
-		<div id="board"></div>
-		<button onclick="start();">Play</button>
+		<div id="alert"></div>
+		<div id="best-score">Best: <span id="best-score-score">0</span></div>
+		<div id="main">
+			<canvas id="canvas" width="498.4px" height="498.4px"></canvas>
+			<button onclick="show();">Play</button>
+		</div>
+		<div id="footer">
+			<input type="number" min="100" max="2000" id="speed" value="200" />
+		</div>
 
 		<script src="script.js"></script>
 	</body>

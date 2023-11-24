@@ -1,21 +1,50 @@
-#board {
-	min-width: 50vw;
+div {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-	height: auto;
 }
 
-.row {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: row;
-	height: auto;
+#alert {
+	position: absolute;
+	height: 20vh;
+	width: 60vw;
+	left: 20vw;
+	top: -20vw;
+	font-size: 5vh;
+	transition: top 500ms ease-in-out;
+	background-color: #555;
+	color: white;
+	font-weight: bolder;
 }
 
-.box {
-	background-color: #878787;
-	border: 0.5em solid black;
+#best-score {
+	display: inline;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10vw;
+	height: 2rem;
+	font-size: 1.5rem;
+	border: 1px solid black;
+}
+
+canvas {
+	margin: 0;
+	border: 1px solid black;
+}
+
+#main button {
+	width: calc(min(50vw, 70vh));
+	height: 1.5em;
+	background-color: #fff;
+	outline: none;
+}
+
+#main button:hover {
+	background-color: #aaa;
+}
+
+#main button:active {
+	background-color: #555;
 }
