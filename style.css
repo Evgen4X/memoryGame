@@ -1,0 +1,21 @@
+#board {
+	min-width: 50vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	height: auto;
+}
+
+.row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	height: auto;
+}
+
+.box {
+	background-color: #878787;
+	border: 0.5em solid black;
+}
