@@ -43,6 +43,7 @@ function alert_(msg, time) {
 function gen(columns, rows) {
 	const width = canvas_size / columns;
 	const height = canvas_size / rows;
+	squares = [];
 	for (let i = 0; i < rows; ++i) {
 		for (let j = 0; j < columns; ++j) {
 			let square = new Square(10 + j * width, 10 + i * height, width - 20, height - 20, "rgb(100, 100, 100)", i * columns + j, false);
@@ -55,9 +56,17 @@ function update() {
 	squares.forEach((square) => {
 		square.draw(ctx);
 	});
+	if (listen) {
+		time_left -= 25;
+		if (time_left <= 0) {
+			lose();
+		}
+	}
+	timer.style.width = (time_left / max_time) * 100 + "vw";
 }
 
 function show(restart = false) {
+	time_left = max_time;
 	if (restart) {
 		combination = [];
 		for (let i = 0; i < combination_length; ++i) {
@@ -67,7 +76,8 @@ function show(restart = false) {
 		combination.push(Math.floor(Math.random() * squares.length));
 	}
 
-	best_score.innerHTML = Math.max(parseInt(best_score.textContent), combination_length);
+	best_clicks.innerHTML = Math.max(parseInt(best_clicks.textContent), combination_length);
+	best_score.innerHTML = Math.max(parseInt(best_score.textContent), Math.round(combination_length * squares.length * (-0.01 * max_time + 52)));
 
 	combination.forEach((i, i_i) => {
 		setTimeout(() => {
@@ -81,6 +91,7 @@ function show(restart = false) {
 }
 
 function win() {
+	timer.width = "100vw";
 	listen = false;
 	squares.forEach((square) => {
 		if (square.id != combination[combination_length - 1]) {
@@ -95,7 +106,8 @@ function win() {
 function lose() {
 	listen = false;
 	alert_(`You lose with score of ${combination_length}!`, 2000);
-	best_score.innerHTML = Math.max(parseInt(best_score.textContent), combination_length);
+	best_score.innerHTML = Math.max(parseInt(best_score.textContent), Math.round(combination_length * squares.length * (-0.01 * max_time + 52)));
+	best_clicks.innerHTML = Math.max(parseInt(best_clicks.textContent), combination_length);
 	combination_length = 1;
 	combination_pos = 0;
 	combination = [];
@@ -109,6 +121,7 @@ function canvas_react(event) {
 	let y = event.clientY - canvas.getBoundingClientRect().top;
 	squares.forEach((square) => {
 		if (square.collide_point(x, y)) {
+			time_left = max_time;
 			if (combination[combination_pos] == square.id) {
 				square.color = "rgb(100, 100, 100)";
 				square.pulse("rgb(0, 255, 0)", speed);
@@ -143,8 +156,27 @@ speed_input.onchange = () => {
 
 const alert_div = document.getElementById("alert");
 const best_score = document.getElementById("best-score-score");
+const best_clicks = document.getElementById("best-score-clicks");
 
 canvas.addEventListener("click", canvas_react);
 
-gen(2, 2);
+var size;
+const sizer = document.getElementById("size");
+sizer.onchange = () => {
+	size = parseInt(sizer.value);
+	ctx.clearRect(0, 0, canvas_size, canvas_size);
+	gen(size, size);
+};
+
+gen(3, 3);
+
 setInterval(update, 25);
+var time_left = 2000;
+var max_time = 2000;
+const time_input = document.getElementById("time-input");
+time_input.onchange = () => {
+	time_left = parseInt(time_input.value);
+	max_time = parseInt(time_input.value);
+};
+
+const timer = document.getElementById("timer");

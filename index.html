@@ -7,15 +7,17 @@
 	</head>
 	<body>
 		<div id="alert"></div>
-		<div id="best-score">Best: <span id="best-score-score">0</span></div>
+		<div id="best-score">Best clicks: <span id="best-score-clicks">0</span><br />Best score: <span id="best-score-score">0</span></div>
 		<div id="main">
+			<div id="timer"></div>
 			<canvas id="canvas" width="498.4px" height="498.4px"></canvas>
 			<button onclick="show();">Play</button>
 		</div>
-		<div id="footer">
-			<input type="number" min="100" max="2000" id="speed" value="200" />
+		<div id="aside">
+			<label for="speed">Speed:</label><input name="speed" type="number" min="100" max="2000" step="25" id="speed" value="200" /><br />
+			<label for="size">Size:</label><input name="size" type="number" min="2" max="10" id="size" value="3" /><br />
+			<label for="time-input">Time:</label><input name="time-input" type="number" min="200" max="5000" step="100" value="1000" id="time-input" />
 		</div>
-
 		<script src="script.js"></script>
 	</body>
 </html>
