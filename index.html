@@ -16,7 +16,9 @@
 		<div id="aside">
 			<label for="speed">Speed:</label><input name="speed" type="number" min="100" max="2000" step="25" id="speed" value="200" /><br />
 			<label for="size">Size:</label><input name="size" type="number" min="2" max="10" id="size" value="3" /><br />
-			<label for="time-input">Time:</label><input name="time-input" type="number" min="200" max="5000" step="100" value="1000" id="time-input" />
+			<label for="time-input">Time:</label><input name="time-input" type="number" min="200" max="5000" step="100" value="1000" id="time-input" /><br />
+			<span><label for="hard-mode">Hard mode (shuffle): </label><input type="checkbox" name="hard-mode" id="hard-mode" /></span><br />
+			<span><label id="hard-mode-chance-label" for="hard-mode-chance">Shuffle probability: </label><input type="number" min="1" max="100" step="1" value="20" name="hard-mode-chance" id="hard-mode-chance" disabled /></span><br />
 		</div>
 		<script src="script.js"></script>
 	</body>
