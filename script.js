@@ -31,16 +31,16 @@ class Square {
 		}, time);
 	}
 
-	switch_(other) {
+	switch_(other, speed_) {
 		let my_x = this.x;
 		let my_y = this.y;
 		let not_x = other.x;
 		let not_y = other.y;
 
-		const not_step_x = (this.x - other.x) / (speed / 25);
-		const my_step_x = (other.x - this.x) / (speed / 25);
-		const not_step_y = (this.y - other.y) / (speed / 25);
-		const my_step_y = (other.y - this.y) / (speed / 25);
+		const not_step_x = (this.x - other.x) / (speed_ / 25);
+		const my_step_x = (other.x - this.x) / (speed_ / 25);
+		const not_step_y = (this.y - other.y) / (speed_ / 25);
+		const my_step_y = (other.y - this.y) / (speed_ / 25);
 
 		const my_xi = setInterval(() => {
 			if ((my_step_x >= 0 && this.x >= not_x) || (my_step_x < 0 && this.x <= not_x)) {
@@ -96,6 +96,10 @@ function alert_(msg, time) {
 	}, time);
 }
 
+function calc_score() {
+	return Math.round((hard_mode_chance + hard_mode_number * 10) * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52));
+}
+
 function gen(columns, rows) {
 	const width = canvas_size / columns;
 	const height = canvas_size / rows;
@@ -134,7 +138,7 @@ function show(restart = false) {
 	}
 
 	best_clicks.innerHTML = Math.max(parseInt(best_clicks.textContent), combination_length);
-	best_score.innerHTML = Math.max(parseInt(best_score.textContent), Math.round(hard_mode_chance * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52)));
+	best_score.innerHTML = Math.max(parseInt(best_score.textContent), calc_score());
 
 	combination.forEach((i, i_i) => {
 		setTimeout(() => {
@@ -144,26 +148,21 @@ function show(restart = false) {
 
 	let switched = 0;
 	if (hard_mode && Math.random() < hard_mode_chance) {
-		do {
-			let a = Math.floor(Math.random() * squares.length),
+		for (let i = 0; i < hard_mode_number; ++i) {
+			let a, b;
+			do {
+				a = Math.floor(Math.random() * squares.length);
 				b = Math.floor(Math.random() * squares.length);
-			if (squares[a].x > squares[b].x && squares[a].y > squares[b].y) {
-				setTimeout(() => {
-					squares[b].switch_(squares[a]);
-				}, combination_length * speed);
-				break;
-			} else if (squares[a].x < squares[b].x && squares[a].y < squares[b].y) {
-				setTimeout(() => {
-					squares[a].switch_(squares[b]);
-				}, combination_length * speed);
-				break;
-			}
-		} while (1);
-		switched = speed;
+			} while (a == b);
+			setTimeout(() => {
+				squares[b].switch_(squares[a], speed * (size * 0.3125));
+			}, (i * 1.5 + combination_length) * speed * (size * 0.3125));
+			switched += speed;
+		}
 	}
 	setTimeout(() => {
 		listen = true;
-	}, combination_length * speed + switched);
+	}, (combination_length + hard_mode_number) * speed * (size * 0.3125) + switched);
 }
 
 function win() {
@@ -182,7 +181,7 @@ function win() {
 function lose() {
 	listen = false;
 	alert_(`You lose with score of ${combination_length}!`, 2000);
-	best_score.innerHTML = Math.max(parseInt(best_score.textContent), Math.round(hard_mode_chance * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52)));
+	best_score.innerHTML = Math.max(parseInt(best_score.textContent), calc_score());
 	best_clicks.innerHTML = Math.max(parseInt(best_clicks.textContent), combination_length);
 	combination_length = 1;
 	combination_pos = 0;
@@ -236,7 +235,7 @@ const best_clicks = document.getElementById("best-score-clicks");
 
 canvas.addEventListener("click", canvas_react);
 
-var size;
+var size = 3;
 const sizer = document.getElementById("size");
 sizer.onchange = () => {
 	size = parseInt(sizer.value);
@@ -254,16 +253,23 @@ sizer.onchange = () => {
 const hard_mode_input = document.getElementById("hard-mode");
 const hard_mode_probability = document.getElementById("hard-mode-chance");
 const hard_mode_chance_label = document.getElementById("hard-mode-chance-label");
+const hard_mode_number_input = document.getElementById("hard-mode-number");
+const hard_mode_number_label = document.getElementById("hard-mode-number-label");
 var hard_mode_chance = 0.2;
+var hard_mode_number = 1;
 var hard_mode = false;
 hard_mode_input.onchange = () => {
 	hard_mode = hard_mode_input.checked;
 	if (hard_mode) {
 		hard_mode_probability.disabled = false;
 		hard_mode_chance_label.style.color = "#000000";
+		hard_mode_number_input.disabled = false;
+		hard_mode_number_label.style.color = "#000000";
 	} else {
 		hard_mode_probability.disabled = true;
 		hard_mode_chance_label.style.color = "#999999";
+		hard_mode_number_input.disabled = true;
+		hard_mode_number_label.style.color = "#999999";
 	}
 };
 hard_mode_probability.onchange = () => {
@@ -275,7 +281,17 @@ hard_mode_probability.onchange = () => {
 		hard_mode_chance = 1;
 		hard_mode_probability.value = 100;
 	}
-	console.log(hard_mode_chance);
+};
+
+hard_mode_number_input.onchange = () => {
+	hard_mode_number = parseInt(hard_mode_number_input.value);
+	if (hard_mode_number < 1) {
+		hard_mode_number = 1;
+		hard_mode_number_input.value = 1;
+	} else if (hard_mode_number > 15) {
+		hard_mode_number = 15;
+		hard_mode_number_input.value = 15;
+	}
 };
 
 gen(3, 3);

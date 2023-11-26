@@ -72,6 +72,7 @@ canvas {
 	background-color: #555;
 }
 
-#hard-mode-chance-label {
+#hard-mode-chance-label,
+#hard-mode-number-label {
 	color: #999999;
 }
