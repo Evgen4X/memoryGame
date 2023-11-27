@@ -97,8 +97,8 @@ function alert_(msg, time) {
 }
 
 function calc_score() {
-	return Math.round((hard_mode_chance + hard_mode_number * 10) * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52));
-}
+	return Math.round((hard_mode_chance + 0 * 10) * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52));
+} //TODO:                                 ^
 
 function gen(columns, rows) {
 	const width = canvas_size / columns;
@@ -147,8 +147,9 @@ function show(restart = false) {
 	});
 
 	let switched = 0;
+	let amount = Math.floor((Math.max(hard_mode_maximum, hard_mode_minimum) -  Math.min(hard_mode_maximum, hard_mode_minimum)) * Math.random() + Math.min(hard_mode_maximum, hard_mode_minimum));
 	if (hard_mode && Math.random() < hard_mode_chance) {
-		for (let i = 0; i < hard_mode_number; ++i) {
+		for (let i = 0; i < amount; ++i) {
 			let a, b;
 			do {
 				a = Math.floor(Math.random() * squares.length);
@@ -162,8 +163,8 @@ function show(restart = false) {
 	}
 	setTimeout(() => {
 		listen = true;
-	}, (combination_length + hard_mode_number) * speed * (size * 0.3125) + switched);
-}
+	}, (combination_length + amount) * speed * (size * 0.3125) + switched);
+} //TODO:                    ^
 
 function win() {
 	timer.width = "100vw";
@@ -253,23 +254,30 @@ sizer.onchange = () => {
 const hard_mode_input = document.getElementById("hard-mode");
 const hard_mode_probability = document.getElementById("hard-mode-chance");
 const hard_mode_chance_label = document.getElementById("hard-mode-chance-label");
-const hard_mode_number_input = document.getElementById("hard-mode-number");
-const hard_mode_number_label = document.getElementById("hard-mode-number-label");
+const hard_mode_minimum_input = document.getElementById("hard-mode-minimum");
+const hard_mode_minimum_label = document.getElementById("hard-mode-minimum-label");
+const hard_mode_maximum_input = document.getElementById("hard-mode-maximum");
+const hard_mode_maximum_label = document.getElementById("hard-mode-maximum-label");
 var hard_mode_chance = 0.2;
-var hard_mode_number = 1;
+var hard_mode_minimum = 1;
+var hard_mode_maximum = 1;
 var hard_mode = false;
 hard_mode_input.onchange = () => {
 	hard_mode = hard_mode_input.checked;
 	if (hard_mode) {
 		hard_mode_probability.disabled = false;
 		hard_mode_chance_label.style.color = "#000000";
-		hard_mode_number_input.disabled = false;
-		hard_mode_number_label.style.color = "#000000";
+		hard_mode_minimum_input.disabled = false;
+		hard_mode_minimum_label.style.color = "#000000";
+		hard_mode_maximum_input.disabled = false;
+		hard_mode_maximum_label.style.color = "#000000";
 	} else {
 		hard_mode_probability.disabled = true;
 		hard_mode_chance_label.style.color = "#999999";
-		hard_mode_number_input.disabled = true;
-		hard_mode_number_label.style.color = "#999999";
+		hard_mode_minimum_input.disabled = true;
+		hard_mode_minimum_label.style.color = "#999999";
+		hard_mode_maximum_input.disabled = true;
+		hard_mode_maximum_label.style.color = "#999999";
 	}
 };
 hard_mode_probability.onchange = () => {
@@ -283,14 +291,25 @@ hard_mode_probability.onchange = () => {
 	}
 };
 
-hard_mode_number_input.onchange = () => {
-	hard_mode_number = parseInt(hard_mode_number_input.value);
-	if (hard_mode_number < 1) {
-		hard_mode_number = 1;
-		hard_mode_number_input.value = 1;
-	} else if (hard_mode_number > 15) {
-		hard_mode_number = 15;
-		hard_mode_number_input.value = 15;
+hard_mode_minimum_input.onchange = () => {
+	hard_mode_minimum = parseInt(hard_mode_minimum_input.value);
+	if (hard_mode_minimum < 1) {
+		hard_mode_minimum = 1;
+		hard_mode_minimum_input.value = 1;
+	} else if (hard_mode_minimum > 15) {
+		hard_mode_minimum = 15;
+		hard_mode_minimum_input.value = 15;
+	}
+};
+
+hard_mode_maximum_input.onchange = () => {
+	hard_mode_maximum = parseInt(hard_mode_maximum_input.value);
+	if (hard_mode_maximum < 1) {
+		hard_mode_maximum = 1;
+		hard_mode_maximum_input.value = 1;
+	} else if (hard_mode_maximum > 15) {
+		hard_mode_maximum = 15;
+		hard_mode_maximum_input.value = 15;
 	}
 };
 
