@@ -97,8 +97,8 @@ function alert_(msg, time) {
 }
 
 function calc_score() {
-	return Math.round((hard_mode_chance + 0 * 10) * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52));
-} //TODO:                                 ^
+	return Math.round((hard_mode_chance + Math.max(hard_mode_minimum, hard_mode_maximum) - Math.min(hard_mode_minimum, hard_mode_maximum) * 10) * 2500 * (hard_mode ? 1 : 0) + combination_length * squares.length * (-0.01 * max_time + 52) + (ultra_hard_mode ? 1000 * combination_length : 0));
+}
 
 function gen(columns, rows) {
 	const width = canvas_size / columns;
@@ -140,14 +140,18 @@ function show(restart = false) {
 	best_clicks.innerHTML = Math.max(parseInt(best_clicks.textContent), combination_length);
 	best_score.innerHTML = Math.max(parseInt(best_score.textContent), calc_score());
 
-	combination.forEach((i, i_i) => {
-		setTimeout(() => {
-			squares[i].pulse("rgb(0, 0, 255)", speed);
-		}, i_i * speed * 1.1);
-	});
+	if (!ultra_hard_mode) {
+		combination.forEach((i, i_i) => {
+			setTimeout(() => {
+				squares[i].pulse("rgb(0, 0, 255)", speed);
+			}, i_i * speed * 1.1);
+		});
+	} else {
+		squares[combination[combination_length - 1]].pulse("rgb(0, 0, 255)", speed);
+	}
 
 	let switched = 0;
-	let amount = Math.floor((Math.max(hard_mode_maximum, hard_mode_minimum) -  Math.min(hard_mode_maximum, hard_mode_minimum)) * Math.random() + Math.min(hard_mode_maximum, hard_mode_minimum));
+	let amount = Math.floor((Math.max(hard_mode_maximum, hard_mode_minimum) - Math.min(hard_mode_maximum, hard_mode_minimum)) * Math.random() + Math.min(hard_mode_maximum, hard_mode_minimum));
 	if (hard_mode && Math.random() < hard_mode_chance) {
 		for (let i = 0; i < amount; ++i) {
 			let a, b;
@@ -163,8 +167,8 @@ function show(restart = false) {
 	}
 	setTimeout(() => {
 		listen = true;
-	}, (combination_length + amount) * speed * (size * 0.3125) + switched);
-} //TODO:                    ^
+	}, (combination_length * (ultra_hard_mode ? 0 : 1) + amount) * speed * (size * 0.3125) + switched);
+}
 
 function win() {
 	timer.width = "100vw";
@@ -311,6 +315,12 @@ hard_mode_maximum_input.onchange = () => {
 		hard_mode_maximum = 15;
 		hard_mode_maximum_input.value = 15;
 	}
+};
+
+const ultra_hard_mode_input = document.getElementById("ultra-hard-mode");
+var ultra_hard_mode = false;
+ultra_hard_mode_input.onchange = () => {
+	ultra_hard_mode = ultra_hard_mode_input.checked;
 };
 
 gen(3, 3);
